@@ -18,3 +18,6 @@ on post-fs
     chmod 0660 /sys/class/hw_power/charger/charge_data/iin_thermal
     chown system system /sys/class/hw_power/charger/charge_data/iin_thermal
     write /sys/class/hw_power/charger/charge_data/iin_thermal 900
+
+on boot
+    start health-hal-2-0

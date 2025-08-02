@@ -49,7 +49,7 @@ INSTALLED_RADIOIMAGE_TARGET += $(INSTALLED_RECOVERYKERNELIMAGE_TARGET)
 # recovery_ramdisk.img
 #
 
-INTERNAL_CUSTOM_RECOVERYIMAGE_ARGS := --base 0x80000000 --pagesize 2048 --kernel /dev/null --ramdisk $(recovery_ramdisk) --cmdline "slub_min_objects=12 unmovable_isolate1=2:192M,3:224M,4:256M buildvariant=$(TARGET_BUILD_VARIANT)" --kernel_offset 0x00008000 --ramdisk_offset 0x02000000 --second_offset 0x00f00000 --tags_offset 0x00000100 --header_version 0
+INTERNAL_CUSTOM_RECOVERYIMAGE_ARGS := --base 0x80000000 --pagesize 2048 --kernel /dev/null --ramdisk $(recovery_ramdisk) --cmdline "androidboot.selinux=permissive slub_min_objects=12 unmovable_isolate1=2:192M,3:224M,4:256M buildvariant=$(TARGET_BUILD_VARIANT)" --kernel_offset 0x00008000 --ramdisk_offset 0x02000000 --second_offset 0x00f00000 --tags_offset 0x00000100 --header_version 0
 
 .PHONY: recoveryimage
 recoveryimage: recoveryvendorimage $(INSTALLED_RECOVERYIMAGE_TARGET)
