@@ -1,0 +1,20 @@
+on init
+    mkdir /persist 0771 system system
+    mkdir /firmware 0771 system system
+    mkdir /log
+
+on fs   
+    mount ext4 /dev/block/platform/bootdevice/by-name/log /log
+    restorecon /log
+    chmod 775 /log
+    chown root system /log
+
+on post-fs
+    symlink /dev/block/sda /dev/block/mmcblk0boot0
+    symlink /dev/block/sdb /dev/block/mmcblk0boot1
+    symlink /dev/block/mmcblk0boot0 /dev/block/platform/bootdevice/by-name/preloader_a
+    symlink /dev/block/mmcblk0boot1 /dev/block/platform/bootdevice/by-name/preloader_b
+    
+    chmod 0660 /sys/class/hw_power/charger/charge_data/iin_thermal
+    chown system system /sys/class/hw_power/charger/charge_data/iin_thermal
+    write /sys/class/hw_power/charger/charge_data/iin_thermal 900
