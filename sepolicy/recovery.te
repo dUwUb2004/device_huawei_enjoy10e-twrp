@@ -1,0 +1,25 @@
+allow recovery rootfs:dir { mounton write };
+
+allow recovery block_device:blk_file { open read write ioctl };
+allow recovery dm_device:blk_file { open read write ioctl };
+
+allow recovery sysfs:dir search;
+
+allow recovery kmsg_device:chr_file { open write };
+
+allow recovery default_prop:file { open read map getattr };
+
+allow recovery tmpfs:dir { open read write search };
+allow recovery tmpfs:file { create open read write getattr };
+allow recovery tmpfs:lnk_file { create unlink };
+
+# Mount filesystems
+allow recovery rootfs:dir mounton;
+allow recovery tmpfs:dir mounton;
+allow recovery fs_type:filesystem ~relabelto;
+allow recovery unlabeled:filesystem ~relabelto;
+
+# Manage recovery data (cache/recovery)
+allow recovery cache_file:dir create_dir_perms;
+allow recovery cache_recovery_file:file create_file_perms;
+
