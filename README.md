@@ -1,10 +1,36 @@
 ```
 #
-# Copyright (C) 2025 The LineageOS Project
+# Copyright (C) 2025 The TWRP Project
 #
 # SPDX-License-Identifier: Apache-2.0
 #
 ```
+## How to compile
+1.sync twrp-12.1 source code
+
+2.git clone this repo to '/device/huawei/enjoy10e'
+
+<pre>
+make recoveryimage
+</pre>
+## How to flash
+1.unlock bootloader
+
+<pre>
+fastboot flash recovery_ramdisk recovery.img
+fastboot flash recovery_vendor recovery_vendor.img
+</pre>
+## Bug
+1.touch screen
+
+2.FBE2.0（Not work fully）
+## Tips
+没错，这个就是圾皇畅享10e的twrp，还在修复中，尚未完善，欢迎pr，有什么问题可以发我
+
+邮件 wangguanzhiabcd@126.com
+
+或者直接在酷安联系我，搜索SKDushow
+
 The Huawei enjoy 10E (codenamed "enjoy10e") is an entry-level budget tablet from Huawei.
 
 It was released in May 2020.
