@@ -7,18 +7,7 @@
 LOCAL_PATH := $(call my-dir)
 
 #
-# kernel.img
-#
-
-INTERNAL_CUSTOM_BOOTIMAGE_ARGS := --base $(BOARD_KERNEL_BASE) --pagesize $(BOARD_KERNEL_PAGESIZE) --kernel $(INSTALLED_KERNEL_TARGET) --cmdline "$(BOARD_KERNEL_CMDLINE) buildvariant=userdebug"
-
-$(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_FILES) $(BOOTIMAGE_EXTRA_DEPS) $(INSTALLED_KERNEL_TARGET)
-	$(call pretty,"Target boot image: $@")
-	$(hide) $(MKBOOTIMG) $(INTERNAL_CUSTOM_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $@
-	$(hide) $(call assert-max-image-size,$@,$(BOARD_BOOTIMAGE_PARTITION_SIZE))
-
-#
-# recovery_kernel.img
+# recovery.img
 #
 
 INSTALLED_RECOVERYKERNELIMAGE_TARGET := $(PRODUCT_OUT)/recovery_kernel.img
@@ -33,31 +22,67 @@ $(RECOVERY_KERNEL_DUMMY_RAMDISK):
 $(RECOVERY_KERNEL_DUMMY_SECOND):
 	$(hide) echo "dummy" > $@
 
-INTERNAL_CUSTOM_RECOVERYKERNELIMAGE_ARGS := --base 0x40078000 --pagesize 2048 --kernel $(INSTALLED_KERNEL_TARGET) --ramdisk $(RECOVERY_KERNEL_DUMMY_RAMDISK) --second $(RECOVERY_KERNEL_DUMMY_SECOND) --dtb $(TARGET_PREBUILT_DTB) --recovery_dtbo $(TARGET_PREBUILT_DTBO) --cmdline "bootopt=64S3,32N2,64N2 unmovable_isolate1=2:256M,3:312M,4:348M buildvariant=$(TARGET_BUILD_VARIANT)" --kernel_offset 0x00008000 --ramdisk_offset 0x11a88000 --second_offset 0x00e88000 --tags_offset 0x07808000 --header_version 2
+INTERNAL_CUSTOM_RECOVERYIMAGE_ARGS := \
+	--base 0x40078000 \
+	--pagesize 2048 \
+	--kernel $(INSTALLED_KERNEL_TARGET) \
+	--ramdisk $(RECOVERY_KERNEL_DUMMY_RAMDISK) \
+	--second $(RECOVERY_KERNEL_DUMMY_SECOND) \
+	--dtb $(TARGET_PREBUILT_DTB) \
+	--recovery_dtbo $(TARGET_PREBUILT_DTBO) \
+	--cmdline "bootopt=64S3,32N2,64N2 androidboot.selinux=permissive unmovable_isolate1=2:256M,3:312M,4:348M buildvariant=$(TARGET_BUILD_VARIANT)" \
+	--kernel_offset 0x00008000 \
+	--ramdisk_offset 0x11a88000 \
+	--second_offset 0x00e88000 \
+	--tags_offset 0x07808000 \
+	--header_version 2
 
-.PHONY: recoverykernelimage
-recoverykernelimage: $(INSTALLED_RECOVERYKERNELIMAGE_TARGET)
+.PHONY: recoveryimage
+recoveryimage: dtboimage recovery_ramdiskimage $(INSTALLED_RECOVERYIMAGE_TARGET)
 
-$(INSTALLED_RECOVERYKERNELIMAGE_TARGET): $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_FILES) $(BOOTIMAGE_EXTRA_DEPS) $(INSTALLED_KERNEL_TARGET) $(TARGET_PREBUILT_DTB) $(TARGET_PREBUILT_DTBO) $(RECOVERY_KERNEL_DUMMY_RAMDISK) $(RECOVERY_KERNEL_DUMMY_SECOND)
-	$(call pretty,"Target recovery kernel image: $@")
-	$(hide) $(MKBOOTIMG) $(INTERNAL_CUSTOM_RECOVERYKERNELIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) --output $@
+$(INSTALLED_RECOVERYIMAGE_TARGET): $(MKBOOTIMG) $(AVBTOOL) $(recovery_ramdisk) $(INTERNAL_BOOTIMAGE_FILES) $(BOOTIMAGE_EXTRA_DEPS) $(INSTALLED_KERNEL_TARGET) $(TARGET_PREBUILT_DTB) $(TARGET_PREBUILT_DTBO) $(RECOVERY_KERNEL_DUMMY_RAMDISK) $(RECOVERY_KERNEL_DUMMY_SECOND)
+	$(call pretty,"Target recovery image: $@")
+	$(hide) $(MKBOOTIMG) $(INTERNAL_CUSTOM_RECOVERYIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) --output $@
 	$(hide) $(call assert-max-image-size,$@,$(BOARD_BOOTIMAGE_PARTITION_SIZE))
+	$(hide) $(AVBTOOL) add_hash_footer \
+		--image $@ \
+		--partition_size $(BOARD_RECOVERYIMAGE_PARTITION_SIZE) \
+		--partition_name recovery $(INTERNAL_AVB_RECOVERY_SIGNING_ARGS) \
+		$(BOARD_AVB_RECOVERY_ADD_HASH_FOOTER_ARGS)
 
-INSTALLED_RADIOIMAGE_TARGET += $(INSTALLED_RECOVERYKERNELIMAGE_TARGET)
+INSTALLED_RADIOIMAGE_TARGET += $(INSTALLED_RECOVERYIMAGE_TARGET)
 
 #
 # recovery_ramdisk.img
 #
+INSTALLED_RECOVERY_RAMDISKIMAGE_TARGET := $(PRODUCT_OUT)/recovery_ramdisk.img
 
-INTERNAL_CUSTOM_RECOVERYIMAGE_ARGS := --base 0x80000000 --pagesize 2048 --kernel /dev/null --ramdisk $(recovery_ramdisk) --cmdline "androidboot.selinux=permissive slub_min_objects=12 unmovable_isolate1=2:192M,3:224M,4:256M buildvariant=$(TARGET_BUILD_VARIANT)" --kernel_offset 0x00008000 --ramdisk_offset 0x02000000 --second_offset 0x00f00000 --tags_offset 0x00000100 --header_version 0
+INTERNAL_CUSTOM_RECOVERY_RAMDISKIMAGE_ARGS := \
+	--base 0x80000000 \
+	--pagesize 2048 \
+	--kernel /dev/null \
+	--ramdisk $(recovery_ramdisk) \
+	--cmdline "slub_min_objects=12 unmovable_isolate1=2:192M,3:224M,4:256M buildvariant=$(TARGET_BUILD_VARIANT)" \
+	--kernel_offset 0x00008000 \
+	--ramdisk_offset 0x02000000 \
+	--second_offset 0x00f00000 \
+	--tags_offset 0x00000100 \
+	--header_version 0
 
-.PHONY: recoveryimage
-recoveryimage: recoveryvendorimage $(INSTALLED_RECOVERYIMAGE_TARGET)
+.PHONY: recovery_ramdiskimage
+recovery_ramdiskimage: recoveryvendorimage $(INSTALLED_RECOVERY_RAMDISKIMAGE_TARGET)
 
-$(INSTALLED_RECOVERYIMAGE_TARGET): $(MKBOOTIMG) $(recovery_ramdisk) $(INSTALLED_RECOVERYKERNELIMAGE_TARGET) $(INSTALLED_RECVENDORIMAGE_TARGET)
-	@echo "----- Making recovery image ------"
-	$(hide) $(MKBOOTIMG) $(INTERNAL_CUSTOM_RECOVERYIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) --output $@
+$(INSTALLED_RECOVERY_RAMDISKIMAGE_TARGET): $(MKBOOTIMG) $(AVBTOOL) $(recovery_ramdisk) $(INSTALLED_RECOVERYIMAGE_TARGET) $(INSTALLED_RECVENDORIMAGE_TARGET)
+	@echo "----- Making recovery ramdisk image ------"
+	$(hide) $(MKBOOTIMG) $(INTERNAL_CUSTOM_RECOVERY_RAMDISKIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) --output $@
 	$(hide) $(call assert-max-image-size,$@,$(BOARD_RECOVERYIMAGE_PARTITION_SIZE))
+	$(hide) $(AVBTOOL) add_hash_footer \
+		--image $@ \
+		--partition_size $(BOARD_RECOVERYIMAGE_PARTITION_SIZE) \
+		--partition_name recovery $(INTERNAL_AVB_RECOVERY_SIGNING_ARGS) \
+		$(BOARD_AVB_RECOVERY_ADD_HASH_FOOTER_ARGS)
+
+INSTALLED_RADIOIMAGE_TARGET += $(INSTALLED_RECOVERY_RAMDISKIMAGE_TARGET)
 
 #
 # ramdisk-recovery_vendor.img
