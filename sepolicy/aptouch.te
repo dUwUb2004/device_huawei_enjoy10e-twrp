@@ -1,0 +1,36 @@
+type aptouch, domain, coredomain;
+type aptouch_exec, exec_type, file_type;
+init_daemon_domain(aptouch)
+allow aptouch rootfs:file read;
+allow aptouch rootfs:file execute;
+allow aptouch rootfs:file getattr;
+allow aptouch rootfs:file open;
+allow aptouch rootfs:dir read;
+allow aptouch property_socket:sock_file write;
+allow aptouch rootfs:file { read getattr };
+allow aptouch proc_cmdline:file read;
+allow aptouch sysfs:file read;
+allow aptouch device:chr_file write;
+allow aptouch device:chr_file { write open };
+allow aptouch init:unix_stream_socket connectto;
+allow aptouch proc_cmdline:file { read open };
+allow aptouch sysfs:file { read open };
+allow aptouch vendor_default_prop:property_service set;
+allow aptouch sysfs:file getattr;
+allow aptouch aptouch:capability sys_nice;
+allow aptouch proc_cmdline:file getattr;
+allow aptouch device:chr_file read;
+allow aptouch device:chr_file ioctl;
+allow init aptouch_exec:file relabelto;
+allow aptouch vendor_default_prop:property_service set;
+allow aptouch sysfs:file getattr;
+allow aptouch self:capability sys_nice;
+allow aptouch proc_cmdline:file getattr;
+allow aptouch device:chr_file read;
+allow aptouch device:chr_file ioctl;
+allow init aptouch:process transition;
+
+allow aptouch rootfs:file map;
+allow aptouch system_file:file { execute read open getattr map };
+
+domain_auto_trans(init, aptouch_exec, aptouch)

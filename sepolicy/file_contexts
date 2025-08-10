@@ -1,0 +1,1 @@
+/vendor/bin/aptouch_daemon  u:object_r:aptouch_exec:s0

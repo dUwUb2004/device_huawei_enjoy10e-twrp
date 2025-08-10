@@ -2,6 +2,7 @@ on init
     mkdir /persist 0771 system system
     mkdir /firmware 0771 system system
     mkdir /log
+    restorecon /vendor/bin/aptouch_daemon
 
 on fs   
     mount ext4 /dev/block/platform/bootdevice/by-name/log /log
