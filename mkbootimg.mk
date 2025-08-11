@@ -78,7 +78,7 @@ $(INSTALLED_RECOVERY_RAMDISKIMAGE_TARGET): $(MKBOOTIMG) $(AVBTOOL) $(recovery_ra
 	$(hide) $(call assert-max-image-size,$@,$(BOARD_RECOVERYIMAGE_PARTITION_SIZE))
 	$(hide) $(AVBTOOL) add_hash_footer \
 		--image $@ \
-		--partition_size $(BOARD_RECOVERYIMAGE_PARTITION_SIZE) \
+		--partition_size $(BOARD_RECOVERYRAMDISK_PARTITION_SIZE) \
 		--partition_name recovery $(INTERNAL_AVB_RECOVERY_SIGNING_ARGS) \
 		$(BOARD_AVB_RECOVERY_ADD_HASH_FOOTER_ARGS)
 
