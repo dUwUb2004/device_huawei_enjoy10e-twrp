@@ -23,6 +23,8 @@ fastboot flash recovery_vendor recovery_vendor.img
 ## Bug
 1.touch screen
 
+添加下维修思路传感器hal补齐
+
 2.FBE2.0（Not work fully）
 ## Tips
 没错，这个就是圾皇畅享10e的twrp，还在修复中，尚未完善，欢迎pr，有什么问题可以发我
