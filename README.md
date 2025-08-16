@@ -21,17 +21,22 @@ fastboot flash recovery_ramdisk recovery.img
 fastboot flash recovery_vendor recovery_vendor.img
 </pre>
 ## Bug
-1.touch screen
 
-添加下维修思路传感器hal补齐
+1.FBE2.0（Not work fully）
 
-2.FBE2.0（Not work fully）
 ## Tips
+
 没错，这个就是圾皇畅享10e的twrp，还在修复中，尚未完善，欢迎pr，有什么问题可以发我
 
 邮件 wangguanzhiabcd@126.com
 
 或者直接在酷安联系我，搜索SKDushow
+
+## Tips for fix touchscreen
+
+华为在一些老机型上使用的aptouch来实现触控功能，尤其是麒麟机型居多，所以我们需要移植aptouch来实现这个功能
+
+aptouch主要需要sensor hal，假设你在移植aptouch的时候发现log里面已经看不到缺失文件，但是触控仍然不工作，就要考虑去移植这个hal了
 
 The Huawei enjoy 10E (codenamed "enjoy10e") is an entry-level budget tablet from Huawei.
 
