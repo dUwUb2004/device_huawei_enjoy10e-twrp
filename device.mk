@@ -19,5 +19,11 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     android.frameworks.sensorservice@1.0.vendor
 
+# Keymaster
+PRODUCT_PACKAGES += \
+    libkeymaster3device.vendor \
+    libkeystore-engine-wifi-hidl \
+    libkeystore-wifi-hidl
+    
 # Shipping API level
 PRODUCT_SHIPPING_API_LEVEL := 29

@@ -42,6 +42,9 @@ BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive
 
 BOARD_KERNEL_IMAGE_NAME := Image.gz-dtb
 
+# Build Rules
+BUILD_BROKEN_DUP_RULES := true
+
 # Display
 TARGET_SCREEN_DENSITY := 226
 
