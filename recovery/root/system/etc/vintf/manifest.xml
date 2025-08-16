@@ -24,16 +24,6 @@
         <fqname>@1.0::ISchedulingPolicyService/default</fqname>
     </hal>
     <hal format="hidl">
-        <name>android.frameworks.sensorservice</name>
-        <transport>hwbinder</transport>
-        <version>1.0</version>
-        <interface>
-            <name>ISensorManager</name>
-            <instance>default</instance>
-        </interface>
-        <fqname>@1.0::ISensorManager/default</fqname>
-    </hal>
-    <hal format="hidl">
         <name>android.hidl.manager</name>
         <transport>hwbinder</transport>
         <version>1.2</version>
