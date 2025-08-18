@@ -6,6 +6,8 @@ product                         /product        erofs    ro,barrier=1,discard   
 product                         /product        ext4     ro,barrier=1,discard                                         wait,avb,logical,first_stage_mount
 odm                             /odm            erofs    ro,barrier=1,discard                                         wait,avb,logical,first_stage_mount
 odm                             /odm            ext4     ro,barrier=1,discard                                         wait,avb,logical,first_stage_mount
+system_ext                      /system_ext     erofs    ro,barrier=1,discard                                         wait,avb,logical,first_stage_mount
+system_ext                      /system_ext     ext4     ro,barrier=1,discard                                         wait,avb,logical,first_stage_mount
 
 /dev/block/platform/bootdevice/by-name/misc        /misc            emmc    defaults                                                                   defaults
 /dev/block/platform/bootdevice/by-name/cache      /cache            ext4    noatime,nosuid,nodev,noauto_da_alloc,discard                               wait,check,formattable

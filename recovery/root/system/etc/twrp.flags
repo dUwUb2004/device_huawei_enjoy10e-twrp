@@ -2,6 +2,7 @@
 /vendor_image        emmc      /dev/block/mapper/vendor                                                                    flags=display="Vendor Image";backup=1;flashimg=1;logical
 /product_image       emmc      /dev/block/mapper/product                                                                   flags=display="Product Image";backup=1;flashimg=1;logical
 /odm_image           emmc      /dev/block/mapper/odm                                                                       flags=display="ODM Image";backup=1;flashimg=1;logical
+/system_ext_image    emmc      /dev/block/mapper/odm                                                                       flags=display="System ext Image";backup=1;flashimg=1;logical
 
 /super               emmc      /dev/block/platform/bootdevice/by-name/super                                               flags=backup=1;display="Super Image"
 
